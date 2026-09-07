@@ -54,3 +54,9 @@ app.*.map.json
 .agents/
 .claude/
 skills-lock.json
+
+# Agent/tooling artifacts must never ship (strict)
+AGENTS.md
+CLAUDE.md
+.cursor/
+.windsurf/
