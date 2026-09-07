@@ -60,3 +60,17 @@ jobs:
         with:
           files: fleet-tracker.apk
           generate_release_notes: true
+          body: |
+            **Install (Android 7.0+):** download `fleet-tracker.apk` below and
+            open it on your phone/emulator (allow "install unknown apps" if
+            asked). The live cloud API is baked in — nothing to configure.
+
+            | Role | Email | Password |
+            | --- | --- | --- |
+            | Driver (PDF "User A") | `ravi@fleet.com` | `password123` |
+            | Driver | `priya@fleet.com` | `password123` |
+            | Driver | `divya@fleet.com` | `password123` |
+            | Fleet admin | `admin@fleet.com` | `password123` |
+
+            > First sign-in can take 30–60 s while the free-tier backend
+            > cold-boots — wait a moment and retry once.
