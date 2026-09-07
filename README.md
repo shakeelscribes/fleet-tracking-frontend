@@ -31,7 +31,10 @@ around Chennai 24/7.
 > ⏳ **First sign-in can take 30–60 s.** The free-tier Render backend sleeps
 > after ~15 minutes idle and cold-boots on the first request. If sign-in
 > spins, give it a moment and retry once — every later request is fast.
-> (A keep-alive job pings the API every 10 minutes to minimise this.)
+> **Keep-alive is in place:** a [cronjob.org](https://cronjob.org) job pings
+> the API's `/health` every 10 minutes (a GitHub Actions workflow runs as a
+> free backup), so the backend rarely sleeps — cold starts below should be
+> rare in practice.
 
 ## What you get
 
