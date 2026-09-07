@@ -1,0 +1,67 @@
+name: fleet_tracker
+description: "Fleet Tracker - GPS vehicle tracking client for the fleet-tracking-backend assessment (Flutter + FastAPI)."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management & DI (skill: Riverpod + Hooks, annotation-based)
+  hooks_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
+  flutter_hooks: ^0.21.3+1
+
+  # Routing (skill: typed GoRouter)
+  go_router: ^17.1.0
+
+  # Networking (skill: Dio + Retrofit + Freezed)
+  dio: ^5.9.1
+  retrofit: ^4.9.2
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Storage (skill ANTI-33: tokens only in secure storage)
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.5.4
+
+  # Responsive UI & typography (skill: ScreenUtil, GoogleFonts)
+  flutter_screenutil: ^5.9.3
+  google_fonts: ^8.0.2
+
+  # Map - OpenStreetMap tiles, zero API key (decision: no Google Maps billing)
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+
+  # Misc
+  intl: ^0.20.2
+  flutter_dotenv: ^6.0.0
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code generation (skill: build_runner for everything)
+  build_runner: ^2.11.1
+  riverpod_generator: ^4.0.0+1
+  riverpod_lint: ^3.1.0
+  custom_lint: ^0.8.1
+  go_router_builder: ^4.2.0
+  retrofit_generator: ^10.2.1
+  freezed: ^3.2.3
+  json_serializable: ^6.11.2
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - .env

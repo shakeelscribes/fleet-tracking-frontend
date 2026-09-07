@@ -1,0 +1,62 @@
+name: release-apk
+
+# Builds the release APK and publishes it to GitHub Releases on v* tags.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.0
+          cache: true
+
+      - name: Create default .env (pubspec lists it as an asset)
+        run: |
+          echo "API_BASE_URL=https://fleet-tracking-api.onrender.com/api/v1" > .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib || true
+
+      - name: Static analysis
+        run: flutter analyze --fatal-infos
+
+      - name: Tests (unit + widget; live tag excluded)
+        run: flutter test --exclude-tags=live
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk fleet-tracker.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-tracker-apk
+          path: fleet-tracker.apk
+
+      - name: Publish to GitHub Releases
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fleet-tracker.apk
+          generate_release_notes: true
