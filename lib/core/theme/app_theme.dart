@@ -60,12 +60,42 @@ abstract final class AppTextTheme {
       ),
       labelSmall: body.copyWith(
         fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: textSecondary,
-        letterSpacing: 0.4,
+        letterSpacing: 0.6,
       ),
     );
   }
+}
+
+/// Data-figure styles (ui-ux-pro-max "Mono+Sans data" pattern): display
+/// face + tabular numerals so coordinates, speeds and timestamps align in
+/// columns and don't jitter as digits stream in every 5 seconds.
+abstract final class AppDataText {
+  static TextStyle large(Color color) => GoogleFonts.spaceGrotesk(
+    fontSize: 26.sp,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.3,
+    color: color,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
+
+  static TextStyle medium(Color color) => GoogleFonts.inter(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w600,
+    color: color,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
+}
+
+/// Shared motion tokens (skill: distance-aware timing, not one duration
+/// everywhere). Entry = screens/hero content arriving; pulse = the live
+/// breathing dot; press = ripple-adjacent feedback.
+abstract final class AppMotion {
+  static const Duration entry = Duration(milliseconds: 260);
+  static const Duration press = Duration(milliseconds: 120);
+  static const Duration pulse = Duration(milliseconds: 1600);
+  static const Curve entryCurve = Curves.easeOutCubic;
 }
 
 /// Fully-explicit component themes (design skill checklist: no default
@@ -154,7 +184,11 @@ abstract final class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md.r),
-          side: BorderSide(color: textSecondary.withValues(alpha: 0.14)),
+          side: BorderSide(
+            color: isDark
+                ? textSecondary.withValues(alpha: 0.10)
+                : textSecondary.withValues(alpha: 0.14),
+          ),
         ),
         margin: EdgeInsets.zero,
       ),

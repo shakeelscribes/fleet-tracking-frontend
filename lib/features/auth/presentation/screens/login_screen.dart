@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/app_localizations_ext.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/widgets/app_background.dart';
 
 /// PDF surface 1: multi-user login. Demo chips pre-fill the grader's
 /// credentials (ravi = driver, admin = fleet admin) - zero typing needed.
@@ -28,9 +29,11 @@ class LoginScreen extends HookConsumerWidget {
       if (!(formKey.currentState?.validate() ?? false)) return;
       submitting.value = true;
       try {
-        await ref
-            .read(authControllerProvider.notifier)
-            .login(email.text.trim(), password.text);
+        await guardApi(
+          () => ref
+              .read(authControllerProvider.notifier)
+              .login(email.text.trim(), password.text),
+        );
         // Router redirect takes over on success.
       } on AppException catch (e) {
         if (context.mounted) {
@@ -48,117 +51,141 @@ class LoginScreen extends HookConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 420.w),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Icon(
-                      Icons.directions_bus_outlined,
-                      size: 48.sp,
-                      color: AppColors.primary,
-                    ),
-                    16.verticalSpace,
-                    Text(
-                      l10n.loginTitle,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    8.verticalSpace,
-                    Text(
-                      l10n.loginSubtitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    32.verticalSpace,
-                    TextFormField(
-                      controller: email,
-                      decoration: InputDecoration(
-                        labelText: l10n.emailLabel,
-                        prefixIcon: const Icon(Icons.alternate_email_outlined),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
-                      validator: (v) {
-                        final value = v?.trim() ?? '';
-                        if (value.isEmpty) return l10n.fieldRequired;
-                        if (!value.contains('@')) return l10n.emailInvalid;
-                        return null;
-                      },
-                      onFieldSubmitted: (_) => submit(),
-                    ),
-                    16.verticalSpace,
-                    TextFormField(
-                      controller: password,
-                      decoration: InputDecoration(
-                        labelText: l10n.passwordLabel,
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscure.value
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+      body: AppBackground(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 420.w),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 72.h,
+                          height: 72.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppRadius.xl.r),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColors.primary.withValues(alpha: 0.20),
+                                AppColors.primary.withValues(alpha: 0.05),
+                              ],
+                            ),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.28),
+                            ),
                           ),
-                          onPressed: () => obscure.value = !obscure.value,
-                        ),
-                      ),
-                      obscureText: obscure.value,
-                      autofillHints: const [AutofillHints.password],
-                      validator: (v) =>
-                          (v ?? '').length < 8 ? l10n.passwordShort : null,
-                      onFieldSubmitted: (_) => submit(),
-                    ),
-                    24.verticalSpace,
-                    FilledButton(
-                      onPressed: submitting.value ? null : submit,
-                      child: submitting.value
-                          ? SizedBox(
-                              height: 22.h,
-                              width: 22.h,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                              ),
-                            )
-                          : Text(l10n.signIn),
-                    ),
-                    32.verticalSpace,
-                    Text(
-                      l10n.demoAccounts,
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                    8.verticalSpace,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _DemoChip(
-                            icon: Icons.directions_bus_outlined,
-                            label: l10n.demoDriver,
-                            onTap: () {
-                              email.text = AppConstants.demoDriverEmail;
-                              password.text = AppConstants.demoPassword;
-                            },
+                          child: Icon(
+                            Icons.directions_bus_outlined,
+                            size: 36.sp,
+                            color: AppColors.primary,
                           ),
                         ),
-                        8.horizontalSpace,
-                        Expanded(
-                          child: _DemoChip(
-                            icon: Icons.admin_panel_settings_outlined,
-                            label: l10n.demoAdmin,
-                            onTap: () {
-                              email.text = AppConstants.demoAdminEmail;
-                              password.text = AppConstants.demoPassword;
-                            },
+                      ),
+                      20.verticalSpace,
+                      Text(
+                        l10n.loginTitle,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      8.verticalSpace,
+                      Text(
+                        l10n.loginSubtitle,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      32.verticalSpace,
+                      TextFormField(
+                        controller: email,
+                        decoration: InputDecoration(
+                          labelText: l10n.emailLabel,
+                          prefixIcon: const Icon(
+                            Icons.alternate_email_outlined,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                        keyboardType: TextInputType.emailAddress,
+                        autofillHints: const [AutofillHints.email],
+                        validator: (v) {
+                          final value = v?.trim() ?? '';
+                          if (value.isEmpty) return l10n.fieldRequired;
+                          if (!value.contains('@')) return l10n.emailInvalid;
+                          return null;
+                        },
+                        onFieldSubmitted: (_) => submit(),
+                      ),
+                      16.verticalSpace,
+                      TextFormField(
+                        controller: password,
+                        decoration: InputDecoration(
+                          labelText: l10n.passwordLabel,
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              obscure.value
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () => obscure.value = !obscure.value,
+                          ),
+                        ),
+                        obscureText: obscure.value,
+                        autofillHints: const [AutofillHints.password],
+                        validator: (v) =>
+                            (v ?? '').length < 8 ? l10n.passwordShort : null,
+                        onFieldSubmitted: (_) => submit(),
+                      ),
+                      24.verticalSpace,
+                      FilledButton(
+                        onPressed: submitting.value ? null : submit,
+                        child: submitting.value
+                            ? SizedBox(
+                                height: 22.h,
+                                width: 22.h,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                ),
+                              )
+                            : Text(l10n.signIn),
+                      ),
+                      32.verticalSpace,
+                      Text(
+                        l10n.demoAccounts,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      8.verticalSpace,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _DemoChip(
+                              icon: Icons.directions_bus_outlined,
+                              label: l10n.demoDriver,
+                              onTap: () {
+                                email.text = AppConstants.demoDriverEmail;
+                                password.text = AppConstants.demoPassword;
+                              },
+                            ),
+                          ),
+                          8.horizontalSpace,
+                          Expanded(
+                            child: _DemoChip(
+                              icon: Icons.admin_panel_settings_outlined,
+                              label: l10n.demoAdmin,
+                              onTap: () {
+                                email.text = AppConstants.demoAdminEmail;
+                                password.text = AppConstants.demoPassword;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

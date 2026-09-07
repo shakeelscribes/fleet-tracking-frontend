@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -57,8 +59,14 @@ class MapScreen extends HookConsumerWidget {
                       polylines: [
                         Polyline(
                           points: points,
-                          strokeWidth: 4,
+                          strokeWidth: 4.5,
                           color: AppColors.routeLine,
+                          // Soft teal halo under the line - premium depth
+                          // without gradients on the tiles themselves.
+                          borderStrokeWidth: 8,
+                          borderColor: AppColors.routeLine.withValues(
+                            alpha: 0.18,
+                          ),
                         ),
                       ],
                     ),
@@ -79,7 +87,9 @@ class MapScreen extends HookConsumerWidget {
                   ),
                 ],
               ),
-              // Status overlay - the shared status vocabulary on the map too.
+              // Status overlay - glass pill so the live status floats over
+              // the tiles with real depth (one of two BackdropFilters in
+              // the app; the other is the fleet legend).
               Positioned(
                 top: 12.h,
                 left: 12.w,
@@ -88,9 +98,25 @@ class MapScreen extends HookConsumerWidget {
                   child: Row(
                     children: [
                       live.maybeWhen(
-                        data: (v) => StatusChip(
-                          status: liveStatusOf(v.status),
-                          compact: true,
+                        data: (v) => ClipRRect(
+                          borderRadius: BorderRadius.circular(999.r),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                            child: Container(
+                              padding: EdgeInsets.all(2.r),
+                              decoration: BoxDecoration(
+                                color: AppColors.glassDark,
+                                borderRadius: BorderRadius.circular(999.r),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                ),
+                              ),
+                              child: StatusChip(
+                                status: liveStatusOf(v.status),
+                                compact: true,
+                              ),
+                            ),
+                          ),
                         ),
                         orElse: () => const SizedBox.shrink(),
                       ),

@@ -38,8 +38,9 @@ class AuthController extends _$AuthController {
     try {
       final profile = await ref.watch(meApiProvider).getProfile();
       return AuthState.signedIn(profile: profile);
-    } on AppException {
-      // Access token exists but is unusable and refresh failed upstream.
+    } catch (_) {
+      // Access token exists but is unusable (Retrofit rethrows DioException
+      // even when the interceptor mapped it) - treat as no session.
       await storage.clearTokens();
       return const AuthState.signedOut();
     }
@@ -75,8 +76,10 @@ class AuthController extends _$AuthController {
   }
 }
 
-/// Normalizes anything a repository call can throw into [AppException]
-/// (the interceptor pre-maps; this unwraps Retrofit's DioException wrapper).
+/// Normalizes anything a repository call can throw into [AppException].
+/// Retrofit rethrows Dio's DioException with our mapped error riding in
+/// `.error`, so unwrapping must happen here - `on AppException` alone
+/// never matches at call sites.
 AppException extractAppException(Object error) {
   if (error is AppException) return error;
   if (error is DioException) {
@@ -85,4 +88,15 @@ AppException extractAppException(Object error) {
     return mapDioException(error);
   }
   return AppException.unknown(error: error);
+}
+
+/// Async body wrapper for providers/screens: catches EVERYTHING (Retrofit
+/// rethrows DioException with the mapped error inside), unwraps to
+/// [AppException].
+Future<T> guardApi<T>(Future<T> Function() body) async {
+  try {
+    return await body();
+  } catch (e, st) {
+    Error.throwWithStackTrace(extractAppException(e), st);
+  }
 }

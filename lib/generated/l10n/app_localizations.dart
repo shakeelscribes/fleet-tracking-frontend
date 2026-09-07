@@ -370,6 +370,12 @@ abstract class AppLocalizations {
   /// **'No vehicles registered yet.'**
   String get fleetEmpty;
 
+  /// No description provided for @fleetLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Live fleet'**
+  String get fleetLegend;
+
   /// No description provided for @driverBadge.
   ///
   /// In en, this message translates to:

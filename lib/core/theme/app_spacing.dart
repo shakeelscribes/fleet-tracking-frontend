@@ -10,8 +10,10 @@ abstract final class AppSpacing {
 }
 
 /// Corner radii - one family, deliberately not the Material default 4dp.
+/// `xl` is reserved for hero surfaces (assignment card, brand mark).
 abstract final class AppRadius {
   static const double sm = 8;
   static const double md = 12;
   static const double lg = 16;
+  static const double xl = 20;
 }

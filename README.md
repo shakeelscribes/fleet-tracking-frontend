@@ -33,6 +33,11 @@ Splash ──> Login ──┬── role: driver ──> Driver shell (bottom n
 - **Zero-setup demo:** the release APK has the live cloud URL baked in.
   Demo accounts (public by design): `ravi@fleet.com` / `admin@fleet.com`,
   password `password123`.
+- **Terminology:** the task PDF calls the assigned party a "user" ("assign one
+  bus route and vehicle to each user"); the app models that party as the
+  **driver** role - `ravi@fleet.com` is the PDF's "User A" (Route A + BUS-001).
+  Server-side authorization guarantees each driver sees strictly their own
+  route/vehicle/history, exactly as the PDF's business-logic section requires.
 
 ## Screens
 

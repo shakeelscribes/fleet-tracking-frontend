@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/errors/app_exception.dart';
 import '../../../../core/models/assignment.dart';
 import '../../../../core/models/history.dart';
 import '../../../../core/models/route_polyline.dart';
@@ -36,15 +35,15 @@ Future<RoutePolyline> routePolyline(Ref ref) async {
 Stream<VehicleLive> vehicleLive(Ref ref) async* {
   final api = ref.watch(meApiProvider);
   while (true) {
+    // `on Object`: Retrofit rethrows DioException (mapped error rides in
+    // `.error`), so an `on AppException` catch would never match - and an
+    // uncaught throw kills the poll loop. ANY failure surfaces as an
+    // offline fix and the loop keeps polling (never hot-retries: the
+    // delay is on the shared path, not inside the catch).
     try {
       yield await api.getVehicleCurrent();
-    } on AppException catch (e) {
-      // Surface transient failures to the UI, then keep the loop alive.
+    } on Object {
       yield VehicleLive(vehicleId: 0, vehicleCode: '', status: 'offline');
-      if (e is! NetworkException) {
-        await Future<void>.delayed(AppConstants.livePollInterval);
-        continue;
-      }
     }
     await Future<void>.delayed(AppConstants.livePollInterval);
   }
@@ -54,5 +53,12 @@ Stream<VehicleLive> vehicleLive(Ref ref) async* {
 @riverpod
 Future<HistoryOut> vehicleHistory(Ref ref) async {
   final api = ref.watch(meApiProvider);
-  return api.getVehicleHistory(limit: 500, offset: 0);
+  final history = await api.getVehicleHistory(limit: 500, offset: 0);
+  // Backend streams oldest-first; the UI contract is newest-first so the
+  // latest fix is row 1 (no scrolling to the bottom to find "now").
+  return HistoryOut(
+    vehicleId: history.vehicleId,
+    count: history.count,
+    points: history.points.reversed.toList(),
+  );
 }

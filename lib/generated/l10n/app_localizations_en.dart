@@ -152,6 +152,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fleetEmpty => 'No vehicles registered yet.';
 
   @override
+  String get fleetLegend => 'Live fleet';
+
+  @override
   String get driverBadge => 'Driver';
 
   @override

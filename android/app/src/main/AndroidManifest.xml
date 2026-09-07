@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Live-tracking app: needed for the HTTPS API + OSM map tiles in
+         release builds (debug/profile variants get it via their own manifests). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
-        android:label="fleet_tracker"
+        android:label="Fleet Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

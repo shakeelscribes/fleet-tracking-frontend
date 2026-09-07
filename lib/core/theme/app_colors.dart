@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 /// "official transit system" rather than "tech startup blue", which fits a
 /// fleet-operations tool; amber and green are reserved as *status* colors so
 /// the palette doubles as the tracking status language.
+///
+/// Premium layer (ui-ux-pro-max pass): ops-console dark surfaces with a
+/// subtle vertical lift, hairline separators, glass overlay tokens for
+/// map chrome, and a restrained brand glow.
 class AppColors {
   AppColors._();
 
@@ -19,14 +23,20 @@ class AppColors {
   static const Color primaryContainerLight = Color(0xFFCCF1EC);
 
   // Dark surfaces - near-black with a green cast so teal glows naturally.
+  // Three elevations: canvas < card < raised (hero tiles, floating chrome).
   static const Color backgroundDark = Color(0xFF0C1211);
   static const Color surfaceDark = Color(0xFF141C1A);
   static const Color surfaceContainerDark = Color(0xFF1B2523);
+  static const Color surfaceRaisedDark = Color(0xFF22302C);
+
+  // Glass overlay for map chrome (blur-backed pills over live tiles).
+  static const Color glassDark = Color(0xCC141C1A); // 80% surface
 
   // Light surfaces - paper-white with the faintest teal cast.
   static const Color backgroundLight = Color(0xFFF5F8F7);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color surfaceContainerLight = Color(0xFFEAF0EE);
+  static const Color surfaceRaisedLight = Color(0xFFDDE7E4);
 
   // Text.
   static const Color textPrimaryDark = Color(0xFFE7EFED);
@@ -41,4 +51,12 @@ class AppColors {
 
   // Route polyline on the map.
   static const Color routeLine = Color(0xFF2DD4BF); // teal-400
+
+  /// Restrained brand glow (dark theme): teal halo for hero marks.
+  static List<BoxShadow> glowDark({double alpha = 0.30, double blur = 18}) => [
+    BoxShadow(
+      color: primary.withValues(alpha: alpha),
+      blurRadius: blur,
+    ),
+  ];
 }

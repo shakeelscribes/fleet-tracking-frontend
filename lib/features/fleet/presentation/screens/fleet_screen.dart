@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -9,6 +11,7 @@ import '../../../../core/models/vehicle_live.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_localizations_ext.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/status_chip.dart';
@@ -93,22 +96,64 @@ class FleetScreen extends HookConsumerWidget {
                 left: 12.w,
                 right: 12.w,
                 child: SafeArea(
-                  child: SizedBox(
-                    height: 30.h,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        for (final v in located)
-                          Padding(
-                            padding: EdgeInsets.only(right: 8.w),
-                            child: StatusChip(
-                              status: liveStatusOf(
-                                v.currentLocation?.status ?? 'offline',
-                              ),
-                              compact: true,
-                            ),
+                  // Glass legend - frosted panel listing each vehicle with
+                  // its live chip (the second of two BackdropFilters in the
+                  // app; readable over any tile imagery).
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14.r),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.glassDark,
+                          borderRadius: BorderRadius.circular(14.r),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
-                      ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.fleetLegend.toUpperCase(),
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: AppColors.textSecondaryDark,
+                                    fontSize: 9.sp,
+                                    letterSpacing: 1.2,
+                                  ),
+                            ),
+                            2.verticalSpace,
+                            for (final v in located)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 3.h),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      v.code,
+                                      style: AppDataText.medium(
+                                        AppColors.textPrimaryDark,
+                                      ),
+                                    ),
+                                    10.horizontalSpace,
+                                    StatusChip(
+                                      status: liveStatusOf(
+                                        v.currentLocation?.status ?? 'offline',
+                                      ),
+                                      compact: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

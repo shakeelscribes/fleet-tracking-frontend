@@ -53,6 +53,7 @@
   "fleetTitle": "Fleet overview",
   "fleetSubtitle": "All vehicles, live",
   "fleetEmpty": "No vehicles registered yet.",
+  "fleetLegend": "Live fleet",
   "driverBadge": "Driver",
   "adminBadge": "Fleet admin"
 }
