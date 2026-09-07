@@ -69,6 +69,7 @@ jobs:
             | --- | --- | --- |
             | Driver (PDF "User A") | `ravi@fleet.com` | `password123` |
             | Driver | `priya@fleet.com` | `password123` |
+            | Driver | `arun@fleet.com` | `password123` |
             | Driver | `divya@fleet.com` | `password123` |
             | Fleet admin | `admin@fleet.com` | `password123` |
 

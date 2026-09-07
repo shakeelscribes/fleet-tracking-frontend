@@ -24,6 +24,7 @@ around Chennai 24/7.
 | --- | --- | --- | --- |
 | Driver (the PDF's "User A") | `ravi@fleet.com` | `password123` | Route A · BUS-001 "Chennai Express", live map, own history |
 | Driver | `priya@fleet.com` | `password123` | Route B · BUS-002 "OMR Flier" |
+| Driver | `arun@fleet.com` | `password123` | Route C · BUS-003 "Marina Cruiser" |
 | Driver | `divya@fleet.com` | `password123` | Route D · BUS-004 "Guindy Shuttle" |
 | Fleet admin | `admin@fleet.com` | `password123` | All four vehicles on one live map |
 
